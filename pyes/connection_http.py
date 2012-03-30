@@ -43,8 +43,8 @@ class ClientTransport(object):
         if basic_auth:
             username = basic_auth.get('username')
             password = basic_auth.get('password')
-            base64string = base64.encodestring('%s:%s' %
-                                               (username, password))[:-1]
+            base64string = base64.b64encode('%s:%s' %
+                                               (username, password))
             self.headers["Authorization"] = ("Basic %s" % base64string)
 
     def execute(self, request):
@@ -52,11 +52,11 @@ class ClientTransport(object):
         Execute a request and return a response
         """
         headers = self.headers.copy()
-        headers.update(request.headers)
+        headers.update(request.headers)  # Allow override of self.headers
         s = requests.session()
         response = s.request(method=Method._VALUES_TO_NAMES[request.method],
                                     url="http://%s:%s%s" % (self.host, self.port, request.uri), params=request.parameters,
-                                    data=request.body, headers=request.headers)
+                                    data=request.body, headers=headers)
         return RestResponse(status=response.status_code, body=response.content, headers=response.headers)
 
 def connect(servers=None, framed_transport=False, timeout=None,
@@ -102,7 +102,7 @@ def connect(servers=None, framed_transport=False, timeout=None,
               Expects keys:
                   * username
                   * password
-              
+
     round_robin: bool
               *DEPRECATED*
 
