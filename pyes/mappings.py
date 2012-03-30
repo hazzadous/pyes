@@ -426,14 +426,14 @@ def get_field(name, data, default="object", document_object_field=None):
         if document_object_field:
             return document_object_field(name=name, **data)
         else:
-        return DocumentObjectField(name=name, **data)
+            return DocumentObjectField(name=name, **data)
 
     elif _type == "object":
         if '_timestamp' in data:
             if document_object_field:
                 return document_object_field(name=name, **data)
             else:
-            return DocumentObjectField(name=name, **data)
+                return DocumentObjectField(name=name, **data)
 
         return ObjectField(name=name, **data)
     elif _type == "nested":
