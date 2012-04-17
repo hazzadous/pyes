@@ -51,8 +51,6 @@ from pyes.exceptions import (InvalidParameter,
 
 class DotDict(dict):
     def __getattr__(self, attr):
-        if hasattr(self, attr):
-            return dict.__getattr__(self, attr)
         if attr in self:
             return self[attr]
         raise AttributeError('%s does not have attribute %s' % (self, attr))
@@ -1630,10 +1628,6 @@ class ResultSet(object):
                         del hl[key]
 
     def __getattr__(self, name):
-        # Some odd magic here
-        if hasattr(self, name):
-          return object.__getattr__(self, name)
-
         # Pass through unknown attribute gets to results hit
         hits = self.results['hits']
         if name in hits:
@@ -1669,7 +1663,6 @@ class ResultSet(object):
                     return model(self.connection, self._results['hits']['hits'][val - self.start])
                 else:
                     return [model(self.connection, hit) for hit in self._results['hits']['hits'][start:end]]
-
 
         query = self.query.serialize()
         query['from'] = start
